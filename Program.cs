@@ -10,7 +10,11 @@ namespace Telegram_KinoBot
     {
         static void Main(string[] args)
         {
-            var client = new TelegramBotClient("");
+            Console.WriteLine("\n\n\tВведите 'токен' вашего бота");
+            string token = 
+            Console.ReadLine();
+            Console.Clear();
+            var client = new TelegramBotClient(token);
             client.StartReceiving(Update, Error);
             Console.ReadLine();
         }
