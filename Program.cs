@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 
 namespace Telegram_KinoBot
@@ -43,9 +44,15 @@ namespace Telegram_KinoBot
             }
         }
 
-        private static Task Error(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
+        private static Task Error(ITelegramBotClient botClient, Exception exception, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var errorMessage = exception switch
+            {
+                ApiRequestException apiRequestException => $"Telegram API Error: \n{apiRequestException.ErrorCode}\n{apiRequestException.Message}",
+                _=> exception.ToString()
+            };
+            Console.WriteLine($"Error: {errorMessage}");
+            return Task.CompletedTask;
         }
     }
 }
