@@ -26,20 +26,42 @@ namespace Telegram_KinoBot
             if (message.Text != null)
             {
                 Console.WriteLine($"{message.Chat.FirstName ?? "анон"}   |   {message.Text}");
-                if (message.Text.ToLower().Contains("привет"))
+                //if (message.Text.ToLower().Contains("привет"))
+                if (message.Text == "/start")
                 {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, "Здарова");
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Здравствуй, {message.Chat.FirstName}");
+
+
+
+                    return;
+                }
+                if (message.Text == "/list")
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Вот, сколько фильмов я знаю на данный момент:\n");
+
+                    return;
+                }
+                if (message.Text == "/random")
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Хочешь случайный фильм? Ну что ж...\nТебе достался фильм\n");
+
+                    return;
+                }
+                if (message.Text == "СКОЛЬКОЛЮДЕЙ")//отслеживание статистики пользования ботом, не видимой для пользователей
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Привет, хозяин!\nНа данный момент ботом уже воспользовались:\n");
+
                     return;
                 }
             }
             if (message.Photo != null)
             {
-                await botClient.SendTextMessageAsync(message.Chat.Id, "Фото очень красивое! Но я умею читать только текст)");
+                await botClient.SendTextMessageAsync(message.Chat.Id, "Фото очень красивое! Но я умею читать только текст\nНапиши /start и 'код' фильма, который тебя интересует))");
                 return;
             }
             if (message.Document != null)
             {
-                await botClient.SendTextMessageAsync(message.Chat.Id, "Файл просто потрясающий! Но я умею читать только текст)");
+                await botClient.SendTextMessageAsync(message.Chat.Id, "Файл просто потрясающий! Но я умею читать только текст\nНапиши /start и 'код' фильма, который тебя интересует))");
                 return;
             }
         }
