@@ -25,11 +25,12 @@ namespace Telegram_KinoBot
             var message = update.Message;
             if (message.Text != null)
             {
-                Console.WriteLine($"{message.Chat.FirstName ?? "анон"}   |   {message.Text}");
+                Console.WriteLine($"{message.Chat.FirstName ?? "анон"}{message.Chat.LastName ?? ""}   |   {message.Text}");
                 //if (message.Text.ToLower().Contains("привет"))
                 if (message.Text == "/start")
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"Здравствуй, {message.Chat.FirstName}");
+                    SQL.RegisterUser('@' + update.Message.From.Username);
 
 
 
@@ -47,10 +48,14 @@ namespace Telegram_KinoBot
 
                     return;
                 }
-                if (message.Text == "СКОЛЬКОЛЮДЕЙ")//отслеживание статистики пользования ботом, не видимой для пользователей
+                if (message.Text == "GETUSERSINFO")//отслеживание статистики пользования ботом, не видимой для пользователей
                 {
+                    string userStr = string.Empty;
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"Привет, хозяин!\nНа данный момент ботом уже воспользовались:\n");
-
+                    foreach (var user in SQL.GetUsers())
+                    {
+                        userStr += user + Environment.NewLine;
+                    }
                     return;
                 }
             }
