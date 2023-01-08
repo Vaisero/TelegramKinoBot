@@ -14,15 +14,14 @@ namespace Telegram_KinoBot
                 return "Data Source = WIN-KHDP309B3KQ\\SQLEXPRESS;" +
                        "Initial Catalog = Kino;" +
                        "User ID = devUser;" +
-                       "Password = JBkQeUObCt;" +
+                       "Password = JBkQeUObCt;" + // в БД создан пользователь для удалённого подключения и администрирования. Он является владельцем БД
                        "TrustServerCertificate=True;" +
                        "Encrypt=True;" +
                        "Trusted_Connection=True;";
-                    //"Data Source=WIN-KHDP309B3KQ\\SQLEXPRESS;Initial Catalog=Kino;Integrated Security=True";
             }            
         }
 
-        public static List<string> GetUsers()
+        public static List<string> GetUsers()//вывод списка всех пользователей из БД
         {
             using (var connection = new SqlConnection(CONNECTION_STRING))
             {
@@ -30,8 +29,8 @@ namespace Telegram_KinoBot
                 connection.Open();
                 var command = new SqlCommand();
                 command.Connection = connection;
-                command.CommandText = $"select UserName from UserInfo";
-                var reader = command.ExecuteReader();
+                command.CommandText = $"select UserName from UserInfo"; // вывод только ID пользователей на экран
+                var reader = command.ExecuteReader();                   // дата первого сообщения и дата последнего сообщения не отображаются и находятся в БД
                 while (reader.Read()) 
                 {
                     users.Add(reader.GetString(0));
@@ -40,7 +39,7 @@ namespace Telegram_KinoBot
             }
         }
 
-        public static void RegisterUser(string username)
+        public static void RegisterUser(string username)// регистрация нового пользователя в БД или обновление последнего сообщения у уже имеющегося пользователя
         {
             using(var connection = new SqlConnection(CONNECTION_STRING)) 
             {
@@ -48,11 +47,11 @@ namespace Telegram_KinoBot
                 var command = new SqlCommand();
                 command.Connection = connection;
                 if(IsUserExists(username)) 
-                {
+                {       // обновления даты последнего общения у уже зарегестрированного пользователя
                     command.CommandText = $"update UserInfo set LastDate = '{DateTime.Now.ToString("dd-MM-yyyy")}' where UserName like '{username}'";
                 }
                 else
-                {
+                {           // добавление нового ID в БД и дату первого сообщения
                     command.CommandText = $"insert into UserInfo(UserName,EnterDate,LastDate) values('{username}'" + 
                         $",'{DateTime.Now.ToString("dd-MM-yyyy")}','{DateTime.Now.ToString("dd-MM-yyyy")}')";
                 }
@@ -60,14 +59,14 @@ namespace Telegram_KinoBot
             }
         }
 
-        private static bool IsUserExists(string username)
+        private static bool IsUserExists(string username)// проверка на зарегестрированность пользователя в БД
         {
             using (var connection = new SqlConnection(CONNECTION_STRING))
             {
                 connection.Open();
                 var command = new SqlCommand();
                 command.Connection = connection;
-                command.CommandText = $"select 1 from UserInfo where UserName like '{username}'";
+                command.CommandText = $"select 1 from UserInfo where UserName like '{username}'";// поиск в БД по ID 
                 return command.ExecuteScalar() != null;
             }
         }
