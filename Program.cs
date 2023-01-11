@@ -31,12 +31,13 @@ namespace Telegram_KinoBot
                 if (message.Text == "/start")
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"Здравствуй, {message.Chat.FirstName}");
-                    SQL.RegisterUser((update.Message.From.Id).ToString()); // добавление нового пользователя в БД для статистики 
+                    SQL_Users.RegisterUser((update.Message.From.Id).ToString()); // добавление нового пользователя в БД для статистики 
 
 
 
                     return;
                 }
+
                 if (message.Text == "/list") //функция позволет вывести колличество фильмов, которое имеется в Базе Данных 
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"Вот, сколько фильмов я знаю на данный момент:\n");
@@ -52,7 +53,7 @@ namespace Telegram_KinoBot
                 if (message.Text == "GETUSERSINFO")//отслеживание статистики пользования ботом, не видимой для пользователей
                 {
                     string userStr = string.Empty;   // все пользователи хранятся в отдельной таблице в БД, где указаны их ID, дата первого сообщения боту, дата последнего сообщения боту
-                    foreach (var user in SQL.GetUsers())
+                    foreach (var user in SQL_Users.GetUsers())
                     {
                         userStr += user + Environment.NewLine;
                     }

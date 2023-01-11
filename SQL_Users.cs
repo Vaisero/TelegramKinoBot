@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace Telegram_KinoBot
 {
-    internal class SQL
+    internal class SQL_Users
     {
         public static string CONNECTION_STRING
         {
