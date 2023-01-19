@@ -50,10 +50,9 @@ namespace Telegram_KinoBot
 
                 if (message.Text == "/random")// функция позволяет вывести случайный фильм из Базы Данных
                 {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Хочешь случайный фильм? Ну что ж...\nТебе достался фильм\n");
-                    
-
-                    return;
+                    var filmStr = SQL_Films.GetRandomFilm();
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Хочешь случайный фильм? Ну что ж...\nТебе достался фильм №{filmStr} \n");
+                    //SQL_Films.GetFilm();                  
                 }
 
                 if (message.Text == "GETUSERSINFO")//отслеживание статистики пользования ботом, не видимой для пользователей

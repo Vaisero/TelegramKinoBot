@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using Telegram.Bot.Types;
 
 namespace Telegram_KinoBot
 {
@@ -38,5 +39,24 @@ namespace Telegram_KinoBot
             }
         }
 
+
+        public static int GetRandomFilm()//создаётся случайное число из максимального ID с БД
+        {
+            using (var connection = new SqlConnection(CONNECTION_STRING))
+            {
+                Random rnd = new Random();
+                int randomID = 0;
+                connection.Open();
+                var command = new SqlCommand();
+                command.Connection = connection;
+                command.CommandText = $"select MAX(id) as id from kino";
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    randomID = 1 + rnd.Next(reader.GetInt32(0));
+                }
+                return randomID;
+            }
+        }
     }
 }
