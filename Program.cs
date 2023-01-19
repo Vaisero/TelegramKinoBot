@@ -40,16 +40,22 @@ namespace Telegram_KinoBot
 
                 if (message.Text == "/list") //функция позволет вывести колличество фильмов, которое имеется в Базе Данных 
                 {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Вот, сколько фильмов я знаю на данный момент:\n");
+                    string filmStr = string.Empty;   // все фильмы хранятся в отдельной таблице в БД, где указаны их номер, название, постер, ссылка для просмотра
+                    foreach (var film in SQL_Films.GetNum())
+                    {
+                        filmStr += film;
+                    }
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"На данный момент я знаю {filmStr} фильмов!");
+                }
 
-                    return;
-                }//функция позволет вывести колличество фильмов, которое имеется в Базе Данных
                 if (message.Text == "/random")// функция позволяет вывести случайный фильм из Базы Данных
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"Хочешь случайный фильм? Ну что ж...\nТебе достался фильм\n");
+                    
 
                     return;
-                }// функция позволяет вывести случайный фильм из Базы Данных
+                }
+
                 if (message.Text == "GETUSERSINFO")//отслеживание статистики пользования ботом, не видимой для пользователей
                 {
                     string userStr = string.Empty;   // все пользователи хранятся в отдельной таблице в БД, где указаны их ID, дата первого сообщения боту, дата последнего сообщения боту
@@ -58,7 +64,7 @@ namespace Telegram_KinoBot
                         userStr += user + Environment.NewLine;
                     }
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"Привет, хозяин!\nНа данный момент ботом уже воспользовались пользователи с ID:\n{userStr}");
-                }//отслеживание статистики пользования ботом, не видимой для пользователей
+                }
             }
 
             // далее по коду идёт проверка на введёные данные, ведь бот работает ТОЛЬКО с текстом
