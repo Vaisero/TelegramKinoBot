@@ -11,7 +11,7 @@ namespace Telegram_KinoBot
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("\n\n\tВведите 'токен' вашего бота");
+            Console.WriteLine("\n\n\tВведите 'токен' бота");
             string token = 
             Console.ReadLine(); //ввод токена с консоли для запуска нескольких ботов одновременно 
             Console.Clear();
@@ -25,6 +25,7 @@ namespace Telegram_KinoBot
             var message = update.Message;
             if (message.Text != null)
             {
+                int NumberOfFilm = 0;
                 //вывод сообщений пользователя в консоль. Для удобства выведено его имя и ID
                 Console.WriteLine($"{message.Chat.FirstName ?? "анон"} {message.Chat.LastName ?? ""}     {message.From.Id}   |   {message.Text}");
 
@@ -32,18 +33,28 @@ namespace Telegram_KinoBot
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"Здравствуй, {message.Chat.FirstName}");
                     SQL_Users.RegisterUser((update.Message.From.Id).ToString()); // добавление нового пользователя в БД для статистики 
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"{message.Chat.FirstName}, напиши пожалуйста номер фильма, который ты ищешь(цифрами)\n" +
+                        $"Или же можешь использовать команду из предоставленных, нажав 'Меню'");
 
-
-
-                    return;
                 }
+
+                if (Int32.TryParse(message.Text, out NumberOfFilm))
+                {
+                    await botClient.SendPhotoAsync(message.Chat.Id, photo: $"{SQL_Films.GetIMG(NumberOfFilm)}");//картинка из БД отправляется пользователю в сообщение
+                    string filmStr = string.Empty;   
+                    foreach (var film in SQL_Films.GetFilmInfo(NumberOfFilm))//запрос к БД на показ информации и передача номера фильма
+                    {
+                        filmStr += film;// все фильмы хранятся в отдельной таблице в БД, где указаны их номер, название, постер, ссылка для просмотра
+                    }
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"{filmStr}");
+                }               
 
                 if (message.Text == "/list") //функция позволет вывести колличество фильмов, которое имеется в Базе Данных 
                 {
                     string filmStr = string.Empty;   // все фильмы хранятся в отдельной таблице в БД, где указаны их номер, название, постер, ссылка для просмотра
                     foreach (var film in SQL_Films.GetNum())
                     {
-                        filmStr += film;
+                        filmStr += film; // все фильмы хранятся в отдельной таблице в БД, где указаны их номер, название, постер, ссылка для просмотра
                     }
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"На данный момент я знаю {filmStr} фильмов!");
                 }
