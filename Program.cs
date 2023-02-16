@@ -47,14 +47,7 @@ namespace Telegram_KinoBot
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"На данный момент я знаю {filmStr} фильмов!");
                 }
                 else
-                if (message.Text == "/random")// функция позволяет вывести случайный фильм из Базы Данных
-                {
-                    var filmStr = SQL_Films.GetRandomFilm();
-                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Хочешь случайный фильм? Ну что ж...\nТебе достался фильм №{filmStr} \n");
-                    //SQL_Films.GetFilm();                  
-                }
-                else
-                  if (message.Text == "GETUSERSINFO")//отслеживание статистики пользования ботом, не видимой для пользователей
+                if (message.Text == "GETUSERSINFO")//отслеживание статистики пользования ботом, не видимой для пользователей
                 {
                     string userStr = string.Empty;   // все пользователи хранятся в отдельной таблице в БД, где указаны их ID, дата первого сообщения боту, дата последнего сообщения боту
                     foreach (var user in SQL_Users.GetUsers())
@@ -64,23 +57,26 @@ namespace Telegram_KinoBot
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"Привет, хозяин!\nНа данный момент ботом уже воспользовались пользователи с ID:\n{userStr}");
                 }
                 else
-                if (Int32.TryParse(message.Text, out NumberOfFilm))
+                if (message.Text == "/random")// функция позволяет вывести случайный фильм из Базы Данных
                 {
-                    await botClient.SendPhotoAsync(message.Chat.Id, photo: $"{SQL_Films.GetIMG(NumberOfFilm)}");//картинка из БД отправляется пользователю в сообщение
-                    string filmStr = string.Empty;
-                    foreach (var film in SQL_Films.GetFilmInfo(NumberOfFilm))//запрос к БД на показ информации и передача номера фильма
-                    {
-                        filmStr += film;// все фильмы хранятся в отдельной таблице в БД, где указаны их номер, название, постер, ссылка для просмотра
-                    }
-                    await botClient.SendTextMessageAsync(message.Chat.Id, $"{filmStr}");
+                    var randFilm = SQL_Films.GetRandomFilm();           
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Хочешь случайный фильм? Ну что ж...\nТебе достался фильм №{randFilm} \n");
+
+                    await GetFilmInMessage(botClient, update, randFilm);
                 }
                 else
+                if (Int32.TryParse(message.Text, out NumberOfFilm))//главная функция, выводящая всю информацию о фильме из БД, при условии, что номер верный
+                {
+                    await GetFilmInMessage(botClient, update, NumberOfFilm);
+                }
+                else //если человеком отправлен текст (НЕ число) или же смайлик(в телеграмме он считается текстом)
                     await botClient.SendTextMessageAsync(message.Chat.Id, "Я уверен, что ты просто потрясающий собеседник!😊\nНо к сожалению я умею только помогать тебе с поиском "+
                         "нужного  фильма.🎬\nНапиши пожалуйста номер фильма, который ты ищешь или же воспользуйся командой '/random'");
 
             }
             else
                 await botClient.SendTextMessageAsync(message.Chat.Id, Exceptions.Message(update));
+
         }
 
         private static Task Error(ITelegramBotClient botClient, Exception exception, CancellationToken token) //самая частая ошибка - не верный токен
@@ -92,6 +88,16 @@ namespace Telegram_KinoBot
             };
             Console.WriteLine($"Error: {errorMessage}"); // при появлении ошибок идёт вывод в консоль с номером ошибки
             return Task.CompletedTask;
+        }
+        
+        async static Task GetFilmInMessage(ITelegramBotClient botClient, Update update, int numberFilm)
+        {
+
+            await botClient.SendPhotoAsync(update.Message.Chat.Id, photo: $"{SQL_Films.GetIMG(numberFilm)}");//картинка из БД отправляется пользователю в сообщение
+            string filmStr = string.Empty;
+            foreach (var film in SQL_Films.GetFilmInfo(numberFilm))//запрос к БД на показ информации и передача номера фильма
+                filmStr += film;// все фильмы хранятся в отдельной таблице в БД, где указаны их номер, название, постер, ссылка для просмотра
+            await botClient.SendTextMessageAsync(update.Message.Chat.Id, $"{filmStr}");
         }
     }
 }
