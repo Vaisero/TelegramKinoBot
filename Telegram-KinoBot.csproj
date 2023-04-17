@@ -4,7 +4,14 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Telegram_KinoBot</RootNamespace>
+    <ApplicationIcon>bin\Release\netcoreapp3.1\ico.ico</ApplicationIcon>
+    
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Release\netcoreapp3.1\ico.ico" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
