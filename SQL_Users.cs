@@ -1,35 +1,26 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Npgsql;
 using System;
 using System.Collections.Generic;
-using Telegram.Bot.Types;
 
 namespace Telegram_KinoBot
 {
     internal class SQL_Users
     {
-        public static string CONNECTION_STRING
+        public static NpgsqlConnection CONNECTION_STRING()
         {
-            get
-            {
-                return "Data Source = WIN-KHDP309B3KQ\\SQLEXPRESS;" +
-                       "Initial Catalog = Kino;" +
-                       "User ID = devUser;" +
-                       "Password = JBkQeUObCt;" + // в БД создан пользователь для удалённого подключения и администрирования. Он является владельцем БД
-                       "TrustServerCertificate=True;" +
-                       "Encrypt=True;" +
-                       "Trusted_Connection=True;";
-            }            
+            return new NpgsqlConnection (@"Server=localhost;Port=5432;User Id=devUser;Password=1234;Database=Kino;");
+            // в БД создан пользователь для удалённого подключения и администрирования
         }
 
         public static List<string> GetUsers()//вывод списка всех пользователей из БД
         {
-            using (var connection = new SqlConnection(CONNECTION_STRING))
+            using (NpgsqlConnection connection = CONNECTION_STRING())
             {
                 var users = new List<string>();
                 connection.Open();
-                var command = new SqlCommand();
+                NpgsqlCommand command = new NpgsqlCommand();
                 command.Connection = connection;
-                command.CommandText = $"select UserName from UserInfo"; // вывод только ID пользователей на экран
+                command.CommandText = $"select user_name from kino.user_info"; // вывод только ID пользователей на экран
                 var reader = command.ExecuteReader();                   // дата первого сообщения и дата последнего сообщения не отображаются и находятся в БД
                 while (reader.Read()) 
                 {
@@ -41,18 +32,18 @@ namespace Telegram_KinoBot
 
         public static void RegisterUser(string username)// регистрация нового пользователя в БД или обновление последнего сообщения у уже имеющегося пользователя
         {
-            using(var connection = new SqlConnection(CONNECTION_STRING)) 
+            using (NpgsqlConnection connection = CONNECTION_STRING())
             {
                 connection.Open();
-                var command = new SqlCommand();
+                NpgsqlCommand command = new NpgsqlCommand();
                 command.Connection = connection;
                 if(IsUserExists(username)) 
                 {       // обновления даты последнего общения у уже зарегестрированного пользователя
-                    command.CommandText = $"update UserInfo set LastDate = '{DateTime.Now.ToString("dd-MM-yyyy")}' where UserName like '{username}'";
+                    command.CommandText = $"update kino.user_info set last_date = '{DateTime.Now.ToString("dd-MM-yyyy")}' where user_name like '{username}'";
                 }
                 else
                 {           // добавление нового ID в БД и дату первого сообщения
-                    command.CommandText = $"insert into UserInfo(UserName,EnterDate,LastDate) values('{username}'" + 
+                    command.CommandText = $"insert into kino.user_info(user_name,enter_date,last_date) values('{username}'" + 
                         $",'{DateTime.Now.ToString("dd-MM-yyyy")}','{DateTime.Now.ToString("dd-MM-yyyy")}')";
                 }
                 command.ExecuteNonQuery();
@@ -61,12 +52,12 @@ namespace Telegram_KinoBot
 
         private static bool IsUserExists(string username)// проверка на зарегестрированность пользователя в БД
         {
-            using (var connection = new SqlConnection(CONNECTION_STRING))
+            using (NpgsqlConnection connection = CONNECTION_STRING())
             {
                 connection.Open();
-                var command = new SqlCommand();
+                NpgsqlCommand command = new NpgsqlCommand();
                 command.Connection = connection;
-                command.CommandText = $"select 1 from UserInfo where UserName like '{username}'";// поиск в БД по ID 
+                command.CommandText = $"select 1 from kino.user_info where user_name like '{username}'";// поиск в БД по ID 
                 return command.ExecuteScalar() != null;
             }
         }
