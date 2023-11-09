@@ -40,11 +40,24 @@
 ## Состав базы данных:
 
 *kino.kino*
-* id (int) - уникальный идентификатор для каждого фильма с помощью которого и производится поиск по базе данных 
+* id (integer) - уникальный идентификатор для каждого фильма с помощью которого и производится поиск по базе данных 
 * name (text) - название фильма
 * image (text) - постер фильма, представленный в виде ссылки на изображение
 * kino_link (text) - ссылка на ресурс [Кинопоиск](https://www.kinopoisk.ru/) для ознакомления с описанием фильма
 * link1, link2, link3, link4 (text) - ссылки на сторонние ресурсы для просмотра фильма онлайн без рекламы
+
+  `
+    CREATE TABLE IF NOT EXISTS kino.kino(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    name text COLLATE pg_catalog."default" NOT NULL,
+    image text COLLATE pg_catalog."default" NOT NULL,
+    kino_link text COLLATE pg_catalog."default" NOT NULL,
+    link1 text COLLATE pg_catalog."default" default NULL,
+    link2 text COLLATE pg_catalog."default" default NULL,
+    link3 text COLLATE pg_catalog."default" default NULL,
+    link4 text COLLATE pg_catalog."default" default NULL,
+    CONSTRAINT kino_pkey PRIMARY KEY (id))
+  `
 
 *kino.users_info*
 * user_id (int) - уникальный идентификатор для каждого пользователя
@@ -53,6 +66,17 @@
 * user_second_name (text) - фамилия пользователя
 * first_entry _date (text) - дата первого сообщения пользователя боту
 * last_entry _date (text) - дата последнего сообщения пользователя боту
+
+  `
+    CREATE TABLE IF NOT EXISTS kino.users_info(
+    user_id bigint NOT NULL,
+    user_name text COLLATE pg_catalog."default",
+    user_first_name text COLLATE pg_catalog."default" NOT NULL,
+    user_second_name text COLLATE pg_catalog."default",
+    first_entry_date timestamp with time zone NOT NULL,
+    last_entry_date timestamp with time zone NOT NULL,
+    CONSTRAINT users_info_pkey PRIMARY KEY (user_id))
+  `
 
 Основными преимуществами бота являются простота использования, высокая скорость работы, а также возможность автоматизировать некоторые рутинные задачи. Бот может быть использован как для персональных целей, так и для бизнес-нужд.
 
