@@ -40,7 +40,7 @@
 ## Состав базы данных:
 
 *kino.kino*
-* id (integer) - уникальный идентификатор для каждого фильма с помощью которого и производится поиск по базе данных 
+* id (bigint) - уникальный идентификатор для каждого фильма с помощью которого и производится поиск по базе данных 
 * name (text) - название фильма
 * image (text) - постер фильма, представленный в виде ссылки на изображение
 * kino_link (text) - ссылка на ресурс [Кинопоиск](https://www.kinopoisk.ru/) для ознакомления с описанием фильма
@@ -48,7 +48,7 @@
 
   `
     CREATE TABLE IF NOT EXISTS kino.kino(
-    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     name text COLLATE pg_catalog."default" NOT NULL,
     image text COLLATE pg_catalog."default" NOT NULL,
     kino_link text COLLATE pg_catalog."default" NOT NULL,
@@ -60,12 +60,12 @@
   `
 
 *kino.users_info*
-* user_id (int) - уникальный идентификатор для каждого пользователя
+* user_id (bigint) - уникальный идентификатор для каждого пользователя
 * user_name (text) - уникальный "ник" пользователя
 * user_first_name (text) - имя пользователя
 * user_second_name (text) - фамилия пользователя
-* first_entry _date (text) - дата первого сообщения пользователя боту
-* last_entry _date (text) - дата последнего сообщения пользователя боту
+* first_entry _date (timestamp) - дата первого сообщения пользователя боту
+* last_entry _date (timestamp) - дата последнего сообщения пользователя боту
 
   `
     CREATE TABLE IF NOT EXISTS kino.users_info(
