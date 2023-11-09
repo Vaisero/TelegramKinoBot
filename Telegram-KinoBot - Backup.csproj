@@ -4,12 +4,12 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Telegram_KinoBot</RootNamespace>
-    <ApplicationIcon>Resources\ico.ico</ApplicationIcon>
+    <ApplicationIcon></ApplicationIcon>
     
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Resources\ico.ico" />
+    <Content Include="bin\Release\netcoreapp3.1\ico.ico" />
   </ItemGroup>
 
 
@@ -33,16 +33,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <_DeploymentManifestIconFile Remove="Resources\ico.ico" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="bin\Release\netcoreapp3.1\" />
   </ItemGroup>
 
 </Project>
